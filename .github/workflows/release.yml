@@ -1,0 +1,72 @@
+name: Release
+
+# Builds transfermapexec for every supported platform and attaches the binaries
+# to a GitHub Release. Runs when a version tag is pushed:
+#
+#   git tag v0.1.0
+#   git push origin v0.1.0
+#
+# The binaries then appear on the repository's Releases page.
+
+on:
+  push:
+    tags:
+      - "v*"
+
+# No permissions by default; the job below asks only for what it needs.
+permissions: {}
+
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  release:
+    name: Build and publish
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: write # create the release and upload its assets
+
+    steps:
+      # Actions are pinned to a full commit SHA so a moved tag cannot change
+      # what runs here. The trailing comment is the release that SHA belongs to.
+      - name: Check out source
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      # The newest stable Go, so release binaries carry current standard
+      # library security fixes (go.mod sets the minimum, not the build version).
+      # The cache is off: a release build should not consume cached artifacts.
+      - name: Set up Go
+        uses: actions/setup-go@d8cbb8045d7f43706b9177cceb36c1f91a6644d5 # v7.1.0
+        with:
+          go-version: stable
+          check-latest: true
+          cache: false
+
+      # Same Makefile target as a local build: linux/amd64, linux/arm64,
+      # windows/amd64, darwin/arm64 and darwin/amd64 into ./dist
+      - name: Build all platforms
+        run: make build
+
+      - name: Generate checksums
+        working-directory: dist
+        run: |
+          sha256sum transfermapexec-* > SHA256SUMS
+          cat SHA256SUMS
+
+      # Re-running the workflow for an existing release replaces its assets
+      # instead of failing.
+      - name: Publish release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          TAG: ${{ github.ref_name }}
+        run: |
+          if gh release view "$TAG" >/dev/null 2>&1; then
+            gh release upload "$TAG" dist/* --clobber
+          else
+            gh release create "$TAG" dist/* --title "$TAG" --generate-notes --verify-tag
+          fi

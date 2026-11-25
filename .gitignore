@@ -1,0 +1,394 @@
+# =============================================================================
+# transfermapexec .gitignore
+#
+# A .gitignore only stops *untracked files* from being added. It does not
+# inspect file contents, and it does nothing for a file that is already
+# tracked (use `git rm --cached <file>` for that). Keep credentials out of
+# the source itself.
+# =============================================================================
+
+# -----------------------------------------------------------------------------
+# Build output
+# -----------------------------------------------------------------------------
+# `make build` release binaries
+/dist/
+/bin/
+/build/
+/out/
+
+# `make native` / `go build` binary in the project root
+/transfermapexec
+/transfermapexec.exe
+/transfermapexec-*
+
+# Compiled objects and binaries
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+*.a
+*.o
+*.obj
+
+# Delve / IDE debug binaries
+__debug_bin*
+
+# Release archives and checksums
+*.zip
+*.tar
+*.tar.gz
+*.tgz
+*.tar.bz2
+*.tar.xz
+*.7z
+*.rar
+checksums.txt
+*.sha256
+*.sha512
+
+# -----------------------------------------------------------------------------
+# Go tooling
+# -----------------------------------------------------------------------------
+# Test binaries, coverage, profiles
+*.test
+*.out
+*.cover
+*.coverprofile
+coverage.*
+cover.html
+*.prof
+*.pprof
+*.trace
+
+# Local workspace overrides (machine-specific module replacements)
+go.work
+go.work.sum
+
+# Uncomment if you do not want to commit vendored dependencies
+# /vendor/
+
+# -----------------------------------------------------------------------------
+# Runtime data produced by `transfermapexec server`
+#
+# Received TEXT payloads are written verbatim into the log file, and received
+# FILES land in the -out directory, so both can hold whatever a client sent.
+# -----------------------------------------------------------------------------
+# Default -out directory, plus the one used in the README examples
+received/
+inbox/
+
+# Default -log file (transfermapexec-server.log) and any custom one ending in .log
+*.log
+*.log.*
+logs/
+
+# -----------------------------------------------------------------------------
+# Network debugging captures
+#
+# TLS key logs decrypt captured traffic; captures and HAR exports (which
+# include the data that was sent) contain it.
+# -----------------------------------------------------------------------------
+*.keylog
+*keylog*.txt
+sslkeylog*
+SSLKEYLOGFILE
+*.pcap
+*.pcapng
+*.cap
+*.har
+
+# -----------------------------------------------------------------------------
+# Secrets: environment files
+# -----------------------------------------------------------------------------
+.env
+.env.*
+*.env
+.envrc
+.direnv/
+
+# Templates with placeholder values are safe to commit
+!.env.example
+!.env.sample
+!.env.template
+!.env.dist
+
+# -----------------------------------------------------------------------------
+# Secrets: keys and certificates
+#
+# transfermapexec generates its certificates and SSH host key in memory and writes nothing to
+# disk, so no key material belongs in this repo. If a test fixture is ever
+# needed, add it deliberately with `git add -f`.
+# -----------------------------------------------------------------------------
+*.pem
+*.key
+*.crt
+*.cer
+*.cert
+*.der
+*.csr
+*.p8
+*.p12
+*.pfx
+*.jks
+*.keystore
+*.truststore
+*.ppk
+*.kdbx
+
+# SSH keys
+id_rsa*
+id_dsa*
+id_ecdsa*
+id_ed25519*
+*_rsa
+*_dsa
+*_ecdsa
+*_ed25519
+known_hosts
+authorized_keys
+
+# GnuPG private material
+secring.*
+private-keys-v1.d/
+*.gpg-revocation
+.gnupg/
+
+# -----------------------------------------------------------------------------
+# Secrets: credentials and tokens
+# -----------------------------------------------------------------------------
+secrets/
+.secrets/
+*.secret
+*.secrets
+secrets.*
+secret.*
+*credentials*
+*.credential
+client_secret*.json
+service-account*.json
+service_account*.json
+*-sa.json
+token.json
+tokens.json
+*.token
+.netrc
+_netrc
+.npmrc
+.pypirc
+.htpasswd
+.pgpass
+.my.cnf
+.git-credentials
+.dockercfg
+.docker/config.json
+
+# Cloud / cluster configuration
+.aws/
+.azure/
+.gcloud/
+.config/gcloud/
+.kube/
+kubeconfig
+*.kubeconfig
+*.ovpn
+wg*.conf
+
+# Infrastructure state and variable files
+.terraform/
+*.tfstate
+*.tfstate.*
+*.tfvars
+*.tfvars.json
+crash.log
+.vault-token
+vault-password*
+.vault_pass*
+
+# Local-only config overrides
+*.local
+*.local.*
+config.local.*
+local.settings.json
+
+# -----------------------------------------------------------------------------
+# Backups, dumps, temp files (stale copies of sensitive files end up here)
+# -----------------------------------------------------------------------------
+*.bak
+*.backup
+*.old
+*.orig
+*.rej
+*.tmp
+*.temp
+*.swp
+*.swo
+*.dump
+*.sql
+*.sqlite
+*.sqlite3
+*.db
+tmp/
+temp/
+.tmp/
+.cache/
+core.[0-9]*
+*.core
+*.stackdump
+
+# -----------------------------------------------------------------------------
+# macOS
+# -----------------------------------------------------------------------------
+.DS_Store
+.DS_Store?
+.AppleDouble
+.LSOverride
+._*
+.Spotlight-V100
+.Trashes
+.fseventsd
+.DocumentRevisions-V100
+.TemporaryItems
+.VolumeIcon.icns
+.apdisk
+
+# -----------------------------------------------------------------------------
+# Windows
+# -----------------------------------------------------------------------------
+Thumbs.db
+Thumbs.db:encryptable
+ehthumbs.db
+ehthumbs_vista.db
+[Dd]esktop.ini
+$RECYCLE.BIN/
+*.lnk
+
+# -----------------------------------------------------------------------------
+# Linux
+# -----------------------------------------------------------------------------
+*~
+.directory
+.Trash-*
+.fuse_hidden*
+.nfs*
+
+# -----------------------------------------------------------------------------
+# Editors and IDEs
+# -----------------------------------------------------------------------------
+# JetBrains (GoLand, IntelliJ)
+.idea/
+*.iml
+*.iws
+*.ipr
+
+# VS Code
+.vscode/
+*.code-workspace
+.history/
+
+# Vim / Neovim
+.*.sw?
+[._]*.un~
+Session.vim
+.netrwhist
+
+# Emacs
+\#*\#
+.\#*
+*.elc
+.dir-locals.el
+
+# Others
+*.sublime-project
+*.sublime-workspace
+.fleet/
+.zed/
+.project
+.settings/
+.classpath
+
+# -----------------------------------------------------------------------------
+# AI assistants and coding agents
+#
+# Nothing an AI tool writes, or reads for instructions, belongs in this repo:
+# no agent instruction files, rules, prompts, tool state or MCP config.
+# Instruction filenames are spelled out case-insensitively because git matches
+# case exactly on Linux even though macOS does not.
+# -----------------------------------------------------------------------------
+# Instruction and memory files
+[Aa][Gg][Ee][Nn][Tt][Ss].md
+[Aa][Gg][Ee][Nn][Tt][Ss].*.md
+[Aa][Gg][Ee][Nn][Tt].md
+[Cc][Ll][Aa][Uu][Dd][Ee].md
+[Cc][Ll][Aa][Uu][Dd][Ee].*.md
+[Gg][Ee][Mm][Ii][Nn][Ii].md
+[Cc][Oo][Pp][Ii][Ll][Oo][Tt]-instructions.md
+.github/instructions/
+.github/prompts/
+.github/chatmodes/
+.github/agents/
+
+# Rules and ignore files
+.cursorrules
+.cursorignore
+.cursorindexingignore
+.windsurfrules
+.clinerules
+.roorules
+.roomodes
+.rooignore
+.goosehints
+.aiexclude
+.aiignore
+.claudeignore
+.geminiignore
+.codeiumignore
+
+# Tool state and config directories
+.claude/
+.claude.json
+.codex/
+.gemini/
+.cursor/
+.windsurf/
+.codeium/
+.continue/
+.cline/
+.roo/
+.kilocode/
+.kiro/
+.junie/
+.amazonq/
+.augment/
+.trae/
+.opencode/
+.copilot/
+.tabnine/
+.cody/
+.goose/
+.qodo/
+.plandex/
+.taskmaster/
+.serena/
+.specstory/
+.agents/
+.agent/
+.aider*
+
+# MCP server configuration (frequently holds API keys)
+.mcp.json
+mcp.json
+.mcp/
+opencode.json
+opencode.jsonc
+
+# -----------------------------------------------------------------------------
+# Never ignore source (keep this section LAST - the last matching rule wins)
+#
+# Name-based rules above such as `*credentials*`, `secrets.*` or `*.token`
+# would otherwise silently drop legitimately named Go files, e.g.
+# credentials_test.go or secrets.go.
+# -----------------------------------------------------------------------------
+!*.go
+!go.mod
+!go.sum
